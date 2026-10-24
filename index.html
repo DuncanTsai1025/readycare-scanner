@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReadyCare QR 掃描</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 520px;
+      margin: 24px auto;
+      padding: 16px;
+      color: #222;
+    }
+    h1 { text-align: center; }
+    #reader { width: 100%; margin-top: 20px; }
+    button {
+      padding: 12px 16px;
+      margin: 6px 0;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 16px;
+      padding: 14px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      overflow-wrap: anywhere;
+    }
+    .note { color: #555; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>ReadyCare</h1>
+  <p>掃描設備 QR Code，讀取設備編號。</p>
+
+  <button id="startButton" onclick="startScanner()">開啟相機並掃描</button>
+  <button onclick="stopScanner()">停止相機</button>
+
+  <div id="reader"></div>
+  <div id="result">尚未掃描設備。</div>
+
+  <script>
+    let scanner = null;
+    let busy = false;
+
+    function showMessage(message) {
+      document.getElementById("result").textContent = message;
+    }
+
+    async function startScanner() {
+      if (scanner) {
+        showMessage("掃描器已啟動，請將 QR Code 對準相機。");
+        return;
+      }
+
+      if (typeof Html5Qrcode === "undefined") {
+        showMessage("掃描程式載入失敗，請重新整理網頁後再試。");
+        return;
+      }
+
+      try {
+        scanner = new Html5Qrcode("reader");
+        await scanner.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 220, height: 220 } },
+          (decodedText) => {
+            if (busy) return;
+            busy = true;
+            showMessage("掃描成功！設備編號：" + decodedText);
+            stopScanner();
+          },
+          () => {}
+        );
+        showMessage("相機已開啟，請將設備 QR Code 放進掃描框。");
+      } catch (error) {
+        scanner = null;
+        showMessage(
+          "無法開啟相機：" + error +
+          "。請確認使用 HTTPS 網址，並允許瀏覽器使用相機。"
+        );
+      }
+    }
+
+    async function stopScanner() {
+      if (!scanner) return;
+      try {
+        if (scanner.isScanning) {
+          await scanner.stop();
+        }
+        await scanner.clear();
+      } catch (error) {
+        console.log(error);
+      }
+      scanner = null;
+    }
+  </script>
+</body>
+</html>
