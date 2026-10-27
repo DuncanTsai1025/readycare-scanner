@@ -18,9 +18,7 @@
       --orange: #b86b08;
       --red: #c24141;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -28,12 +26,7 @@
       background: var(--bg);
       color: var(--text);
     }
-
-    .layout {
-      display: flex;
-      min-height: 100vh;
-    }
-
+    .layout { display: flex; min-height: 100vh; }
     aside {
       width: 230px;
       flex-shrink: 0;
@@ -41,26 +34,22 @@
       color: white;
       padding: 28px 18px;
     }
-
     .brand {
       font-size: 23px;
       font-weight: 750;
       letter-spacing: .3px;
       margin-bottom: 6px;
     }
-
     .brand-sub {
       color: #bdccda;
       font-size: 12px;
       margin-bottom: 36px;
     }
-
     .nav-label {
       font-size: 11px;
       color: #a8bbce;
       margin: 22px 10px 10px;
     }
-
     .nav-item {
       display: block;
       color: #e1eaf3;
@@ -70,18 +59,15 @@
       margin: 5px 0;
       font-size: 14px;
     }
-
-    .nav-item.active {
+    .nav-item:hover, .nav-item.active {
       background: #2d4d6b;
       color: white;
     }
-
     main {
       flex: 1;
       min-width: 0;
       padding: 30px;
     }
-
     .topbar {
       display: flex;
       justify-content: space-between;
@@ -89,17 +75,8 @@
       gap: 16px;
       margin-bottom: 28px;
     }
-
-    h1 {
-      font-size: 27px;
-      margin: 0 0 7px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
+    h1 { font-size: 27px; margin: 0 0 7px; }
+    .subtitle { color: var(--muted); font-size: 14px; }
     .system-tag {
       background: #e2f5eb;
       color: #16734f;
@@ -108,19 +85,16 @@
       font-size: 12px;
       white-space: nowrap;
     }
-
     .section-title {
       font-size: 17px;
       font-weight: 700;
       margin: 28px 0 14px;
     }
-
     .metrics {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 16px;
     }
-
     .card {
       background: var(--white);
       border: 1px solid var(--border);
@@ -128,46 +102,30 @@
       padding: 20px;
       box-shadow: 0 2px 6px rgba(25, 45, 70, .025);
     }
-
-    .metric-label {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
+    .metric-label { color: var(--muted); font-size: 13px; }
     .metric-value {
       font-size: 32px;
       font-weight: 750;
       margin: 12px 0 7px;
     }
-
-    .metric-note {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
+    .metric-note { color: var(--muted); font-size: 12px; }
     .blue { color: var(--blue); }
     .green { color: var(--green); }
     .orange { color: var(--orange); }
     .red { color: var(--red); }
-
     .two-columns {
       display: grid;
       grid-template-columns: 1.2fr 1fr;
       gap: 18px;
       margin-top: 20px;
     }
-
-    .card-title {
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-
+    .card-title { font-weight: 700; margin-bottom: 5px; }
     .card-description {
       color: var(--muted);
       font-size: 12px;
       margin-bottom: 20px;
+      line-height: 1.6;
     }
-
     .status-row {
       display: flex;
       align-items: center;
@@ -175,12 +133,7 @@
       margin: 17px 0;
       font-size: 13px;
     }
-
-    .status-name {
-      width: 70px;
-      flex-shrink: 0;
-    }
-
+    .status-name { width: 70px; flex-shrink: 0; }
     .bar {
       flex: 1;
       height: 9px;
@@ -188,19 +141,16 @@
       background: #edf1f5;
       overflow: hidden;
     }
-
     .bar-fill {
       height: 100%;
       border-radius: 10px;
       background: #4386df;
     }
-
     .status-count {
       width: 20px;
       text-align: right;
       font-weight: 650;
     }
-
     .alert {
       border: 1px solid #f2d6ad;
       background: #fff9ed;
@@ -208,43 +158,40 @@
       border-radius: 10px;
       margin-top: 14px;
     }
-
     .alert-title {
       font-size: 13px;
       font-weight: 700;
       color: #935b12;
       margin-bottom: 6px;
     }
-
     .alert-text {
       color: #765d3b;
       font-size: 12px;
       line-height: 1.7;
     }
-
-    .table-wrap {
-      overflow-x: auto;
+    .alert.danger {
+      border-color: #f2caca;
+      background: #fff5f5;
     }
-
+    .alert.danger .alert-title { color: #b83232; }
+    .alert.danger .alert-text { color: #805252; }
+    .table-wrap { overflow-x: auto; }
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
       white-space: nowrap;
     }
-
     th, td {
       padding: 14px 12px;
       text-align: left;
       border-bottom: 1px solid var(--border);
     }
-
     th {
       color: var(--muted);
       font-weight: 600;
       background: #fafbfd;
     }
-
     .pill {
       display: inline-block;
       padding: 5px 9px;
@@ -253,20 +200,30 @@
       background: #fff0d9;
       color: #925c12;
     }
-
+    .pill.red-pill { background: #fde8e8; color: #b83232; }
+    .pill.green-pill { background: #dcf5e8; color: #16734f; }
+    .pill.blue-pill { background: #e4efff; color: #245bb5; }
+    .notice {
+      padding: 12px 14px;
+      border-radius: 9px;
+      background: #f0f5ff;
+      color: #385780;
+      font-size: 12px;
+      line-height: 1.7;
+      margin-top: 14px;
+    }
     .footer {
       color: var(--muted);
       font-size: 12px;
       margin-top: 28px;
       text-align: center;
+      line-height: 1.8;
     }
-
     @media (max-width: 1000px) {
       .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .two-columns { grid-template-columns: 1fr; }
       aside { width: 190px; }
     }
-
     @media (max-width: 650px) {
       .layout { display: block; }
       aside { width: 100%; padding: 18px; }
@@ -280,57 +237,50 @@
       .metrics { gap: 10px; }
       .card { padding: 15px; }
       .metric-value { font-size: 27px; }
+      th, td { padding: 11px 9px; }
     }
   </style>
 </head>
-
 <body>
   <div class="layout">
     <aside>
       <div class="brand">ReadyCare</div>
       <div class="brand-sub">Equipment Readiness System</div>
-
       <nav>
         <div class="nav-label">管理中心</div>
-        <a class="nav-item active" href="dashboard.html">▦　營運總覽</a>
+        <a class="nav-item active" href="#overview">▦　營運總覽</a>
         <a class="nav-item" href="#equipment">▣　設備管理</a>
         <a class="nav-item" href="#bookings">▤　預約與風險</a>
         <a class="nav-item" href="#logs">◷　操作紀錄</a>
       </nav>
     </aside>
 
-    <main>
+    <main id="overview">
       <header class="topbar">
         <div>
           <h1>營運總覽</h1>
-          <div class="subtitle">
-            復健設備狀態、預約需求與風險管理
-          </div>
+          <div class="subtitle">復健設備狀態、預約需求與風險管理</div>
         </div>
-        <div class="system-tag">● 管理後台介面預覽</div>
+        <div class="system-tag">● 課程展示版本</div>
       </header>
 
       <div class="section-title">設備營運概況</div>
-
       <section class="metrics">
         <div class="card">
           <div class="metric-label">設備總數</div>
-          <div class="metric-value">5</div>
+          <div class="metric-value blue">5</div>
           <div class="metric-note">所有登錄設備</div>
         </div>
-
         <div class="card">
           <div class="metric-label">可用設備</div>
           <div class="metric-value green">1</div>
-          <div class="metric-note">目前可供使用</div>
+          <div class="metric-note">輪椅 0 台・助行器 1 台</div>
         </div>
-
         <div class="card">
           <div class="metric-label">清潔中</div>
           <div class="metric-value orange">2</div>
-          <div class="metric-note">清潔完成後可再評估</div>
+          <div class="metric-note">清潔完成後再評估</div>
         </div>
-
         <div class="card">
           <div class="metric-label">故障設備</div>
           <div class="metric-value red">1</div>
@@ -341,105 +291,64 @@
       <section class="two-columns">
         <div class="card">
           <div class="card-title">設備狀態分布</div>
-          <div class="card-description">
-            依設備目前狀態分類（示意資料）
-          </div>
-
+          <div class="card-description">依目前課程測試資料呈現</div>
           <div class="status-row">
             <span class="status-name">可用</span>
             <div class="bar"><div class="bar-fill" style="width:20%"></div></div>
             <span class="status-count">1</span>
           </div>
-
           <div class="status-row">
             <span class="status-name">清潔中</span>
             <div class="bar"><div class="bar-fill" style="width:40%;background:#e6a23c"></div></div>
             <span class="status-count">2</span>
           </div>
-
           <div class="status-row">
             <span class="status-name">故障</span>
             <div class="bar"><div class="bar-fill" style="width:20%;background:#d65a5a"></div></div>
             <span class="status-count">1</span>
           </div>
-
           <div class="status-row">
             <span class="status-name">檢查中</span>
             <div class="bar"><div class="bar-fill" style="width:20%;background:#8796a8"></div></div>
             <span class="status-count">1</span>
           </div>
+          <div class="notice">設備總數 5 台；目前僅 1 台可用。若需求同時發生，系統會依設備類型與可用數量計算短缺風險。</div>
         </div>
 
         <div class="card">
           <div class="card-title">預約風險摘要</div>
-          <div class="card-description">
-            依目前測試情境呈現的示意資訊
-          </div>
-
-          <div class="alert">
+          <div class="card-description">目前測試資料共 5 筆有效預約，全部存在設備短缺。</div>
+          <div class="alert danger">
             <div class="alert-title">高風險預約｜B001</div>
-            <div class="alert-text">
-              輪椅同時需求最高為 4 台，目前短缺 4 台。<br>
-              建議優先確認清潔與檢查進度，評估跨區調度或替代安排。
-            </div>
+            <div class="alert-text">輪椅同時需求最高為 4 台，目前可用輪椅為 0 台，短缺 4 台。建議通知管理人員並評估跨區調度或替代安排。</div>
           </div>
-
           <div class="alert">
             <div class="alert-title">待處理設備｜W03</div>
-            <div class="alert-text">
-              設備目前為故障狀態，尚不可供預約使用。請確認維修進度。
-            </div>
+            <div class="alert-text">設備目前為故障狀態，不列入可用設備。請確認維修進度，避免將故障設備排入預約。</div>
+          </div>
+          <div class="alert">
+            <div class="alert-title">設備調度提醒</div>
+            <div class="alert-text">目前可用助行器 1 台、可用輪椅 0 台。請優先確認清潔與檢查進度，再評估是否能滿足後續需求。</div>
           </div>
         </div>
       </section>
 
       <section class="card" id="equipment" style="margin-top:20px">
         <div class="card-title">設備管理</div>
-        <div class="card-description">
-          設備清單預覽；後續將串接即時資料
-        </div>
-
+        <div class="card-description">設備清單（課程測試資料；非即時同步）</div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>設備編號</th>
-                <th>設備類型</th>
-                <th>目前狀態</th>
-                <th>所在位置</th>
+                <th>設備編號</th><th>設備類型</th><th>目前狀態</th><th>所在位置</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>W01</td>
-                <td>輪椅</td>
-                <td><span class="pill">清潔中</span></td>
-                <td>復健室 A</td>
-              </tr>
-              <tr>
-                <td>W02</td>
-                <td>輪椅</td>
-                <td><span class="pill">清潔中</span></td>
-                <td>復健室 A</td>
-              </tr>
-              <tr>
-                <td>W03</td>
-                <td>輪椅</td>
-                <td><span class="pill" style="background:#fde8e8;color:#b83232">故障</span></td>
-                <td>復健室 B</td>
-              </tr>
-              <tr>
-                <td>W04</td>
-                <td>助行器</td>
-                <td><span class="pill" style="background:#dcf5e8;color:#16734f">可用</span></td>
-                <td>復健室 A</td>
-              </tr>
-              <tr>
-                <td>W05</td>
-                <td>助行器</td>
-                <td><span class="pill">檢查中</span></td>
-                <td>復健室 B</td>
-              </tr>
+              <tr><td>W01</td><td>輪椅</td><td><span class="pill">清潔中</span></td><td>復健室 A</td></tr>
+              <tr><td>W02</td><td>輪椅</td><td><span class="pill">清潔中</span></td><td>復健室 A</td></tr>
+              <tr><td>W03</td><td>輪椅</td><td><span class="pill red-pill">故障</span></td><td>復健室 B</td></tr>
+              <tr><td>W04</td><td>助行器</td><td><span class="pill green-pill">可用</span></td><td>復健室 A</td></tr>
+              <tr><td>W05</td><td>助行器</td><td><span class="pill">檢查中</span></td><td>復健室 B</td></tr>
             </tbody>
           </table>
         </div>
@@ -447,45 +356,47 @@
 
       <section class="card" id="bookings" style="margin-top:20px">
         <div class="card-title">預約與風險</div>
-        <div class="card-description">
-          預約短缺與優先處理建議將於後續串接
-        </div>
+        <div class="card-description">以下為目前試算表計算結果的展示快照；尚未與 Google Sheets 自動同步。</div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>預約編號</th>
-                <th>設備類型</th>
-                <th>同時需求</th>
-                <th>短缺數量</th>
-                <th>風險等級</th>
+                <th>預約編號</th><th>設備類型</th><th>同時需求</th><th>可用數量</th><th>短缺數量</th><th>風險等級</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>B001</td>
-                <td>輪椅</td>
-                <td>4</td>
-                <td>4</td>
-                <td><span class="pill" style="background:#fde8e8;color:#b83232">High</span></td>
-              </tr>
+              <tr><td>B001</td><td>輪椅</td><td>4</td><td>0</td><td>4</td><td><span class="pill red-pill">High</span></td></tr>
+              <tr><td>B002</td><td>助行器</td><td>2</td><td>1</td><td>1</td><td><span class="pill red-pill">High</span></td></tr>
+              <tr><td>B003</td><td>輪椅</td><td>2</td><td>0</td><td>2</td><td><span class="pill red-pill">High</span></td></tr>
+              <tr><td>B004</td><td>輪椅</td><td>4</td><td>0</td><td>4</td><td><span class="pill red-pill">High</span></td></tr>
+              <tr><td>B007</td><td>輪椅</td><td>1</td><td>0</td><td>1</td><td><span class="pill red-pill">High</span></td></tr>
             </tbody>
           </table>
         </div>
+        <div class="notice">風險等級與短缺量依目前測試情境顯示。此頁為展示快照，若 Google Sheets 資料改變，這裡不會自動更新。</div>
       </section>
 
       <section class="card" id="logs" style="margin-top:20px">
         <div class="card-title">操作紀錄</div>
-        <div class="card-description">
-          借出、歸還及狀態異動紀錄將於後續串接
+        <div class="card-description">借出、歸還與設備狀態異動的展示範例</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>事件</th><th>設備編號</th><th>操作內容</th><th>說明</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="pill blue-pill">checked_out</span></td><td>W01</td><td>設備借出</td><td>示範掃描 QR Code 後登記借出</td></tr>
+              <tr><td><span class="pill green-pill">returned_to_cleaning</span></td><td>W01</td><td>設備歸還</td><td>歸還後進入清潔流程</td></tr>
+              <tr><td><span class="pill">status_update</span></td><td>W03</td><td>設備狀態異動</td><td>故障設備暫停提供預約</td></tr>
+            </tbody>
+          </table>
         </div>
-        <p style="font-size:13px;color:#718096">
-          目前為介面預覽，尚未連接即時 ProcessLog。
-        </p>
+        <div class="notice">以上操作紀錄為說明用範例，並非即時讀取 ProcessLog。</div>
       </section>
 
       <div class="footer">
-        ReadyCare · Equipment Readiness & Risk Alert
+        ReadyCare · Equipment Readiness &amp; Risk Alert<br>
+        課程展示版本｜資料以目前測試情境為準，尚未即時同步 Google Sheets
       </div>
     </main>
   </div>
