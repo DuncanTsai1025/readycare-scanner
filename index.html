@@ -36,7 +36,6 @@
 <body>
   <h1>ReadyCare</h1>
   <p>掃描設備 QR Code，讀取設備編號。</p>
-
   <button id="startButton" onclick="startScanner()">開啟相機並掃描</button>
   <button onclick="stopScanner()">停止相機</button>
 
@@ -49,6 +48,31 @@
 
     function showMessage(message) {
       document.getElementById("result").textContent = message;
+    }
+
+    function getReturnUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const returnUrl = params.get("returnUrl");
+
+      if (!returnUrl) return "";
+
+      try {
+        const parsed = new URL(returnUrl);
+
+        // 僅允許回到本專案既有的 Apps Script Web App。
+        if (
+          parsed.origin === "https://script.google.com" &&
+          parsed.pathname.indexOf(
+            "/a/macros/go.thu.edu.tw/s/AKfycbyDPvMKPLWLY4xYWdnN_0j8vTzCpiwSHlh-3SjN7wDEFACQYTQPFbEB83jTO_TPneQpVw/exec"
+          ) === 0
+        ) {
+          return parsed.href.split("#")[0];
+        }
+      } catch (error) {
+        return "";
+      }
+
+      return "";
     }
 
     async function startScanner() {
@@ -64,23 +88,47 @@
 
       try {
         scanner = new Html5Qrcode("reader");
+
         await scanner.start(
           { facingMode: "environment" },
           { fps: 10, qrbox: { width: 220, height: 220 } },
-          (decodedText) => {
+          async (decodedText) => {
             if (busy) return;
             busy = true;
+
+            const scannedText = decodedText.trim();
             showMessage("掃描成功！正在開啟設備資料……");
 
-window.location.href =
-  "https://script.google.com/a/macros/go.thu.edu.tw/s/AKfycbyDPvMKPLWLY4xYWdnN_0j8vTzCpiwSHlh-3SjN7wDEFACQYTQPFbEB83jTO_TPneQpVw/exec?equipmentId="
-  + encodeURIComponent(decodedText.trim());
+            try {
+              if (scanner && scanner.isScanning) {
+                await scanner.stop();
+              }
+            } catch (error) {
+              // 即使相機停止失敗，也繼續處理掃描結果。
+            }
+
+            const returnUrl = getReturnUrl();
+
+            if (returnUrl) {
+              // 使用網址片段傳回設備編號，不會觸發 Apps Script
+              // 以 ?equipmentId= 進入舊的獨立設備操作頁。
+              window.location.href =
+                returnUrl + "#equipmentId=" +
+                encodeURIComponent(scannedText);
+            } else {
+              // 保留原本直接掃描設備 QR Code 的行為。
+              window.location.href =
+                "https://script.google.com/a/macros/go.thu.edu.tw/s/AKfycbyDPvMKPLWLY4xYWdnN_0j8vTzCpiwSHlh-3SjN7wDEFACQYTQPFbEB83jTO_TPneQpVw/exec?equipmentId=" +
+                encodeURIComponent(scannedText);
+            }
           },
           () => {}
         );
+
         showMessage("相機已開啟，請將設備 QR Code 放進掃描框。");
       } catch (error) {
         scanner = null;
+        busy = false;
         showMessage(
           "無法開啟相機：" + error +
           "。請確認使用 HTTPS 網址，並允許瀏覽器使用相機。"
@@ -90,6 +138,7 @@ window.location.href =
 
     async function stopScanner() {
       if (!scanner) return;
+
       try {
         if (scanner.isScanning) {
           await scanner.stop();
@@ -98,7 +147,10 @@ window.location.href =
       } catch (error) {
         console.log(error);
       }
+
       scanner = null;
+      busy = false;
+      showMessage("相機已停止。");
     }
   </script>
 </body>
