@@ -4,153 +4,200 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ReadyCare QR 掃描</title>
+  <title>ReadyCare QR 掃描器</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 520px;
-      margin: 24px auto;
-      padding: 16px;
-      color: #222;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f4f7f8;
+      color: #24323b;
     }
-    h1 { text-align: center; }
-    #reader { width: 100%; margin-top: 20px; }
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 8px #0000000d;
+    }
     button {
       padding: 12px 16px;
-      margin: 6px 0;
-      width: 100%;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    #result {
-      margin-top: 16px;
-      padding: 14px;
-      background: #f1f5f9;
+      margin: 5px 5px 5px 0;
+      border: 0;
       border-radius: 8px;
+      background: #176b5b;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button:disabled { opacity: .5; }
+    #reader {
+      width: 100%;
+      margin-top: 16px;
+    }
+    #message {
+      padding: 12px;
+      border-radius: 8px;
+      background: #eff6ff;
+      margin-top: 15px;
       overflow-wrap: anywhere;
     }
-    .note { color: #555; font-size: 14px; }
+    .muted { color: #64748b; font-size: 13px; }
   </style>
 </head>
 <body>
-  <h1>ReadyCare</h1>
-  <p>掃描設備 QR Code，讀取設備編號。</p>
-  <button id="startButton" onclick="startScanner()">開啟相機並掃描</button>
-  <button onclick="stopScanner()">停止相機</button>
+  <div class="card">
+    <h1>ReadyCare</h1>
+    <p>掃描設備 QR Code，讀取設備編號。</p>
 
-  <div id="reader"></div>
-  <div id="result">尚未掃描設備。</div>
+    <button id="startButton" onclick="startScanner()">開啟相機並掃描</button>
+    <button id="stopButton" onclick="stopScanner()" disabled>停止相機</button>
+
+    <div id="reader"></div>
+    <div id="message" role="status">請允許瀏覽器使用相機。</div>
+  </div>
 
   <script>
     let scanner = null;
-    let busy = false;
+    let scanning = false;
+    let handlingResult = false;
+
+    const params = new URLSearchParams(window.location.search);
+    const returnUrl = params.get("returnUrl");
 
     function showMessage(message) {
-      document.getElementById("result").textContent = message;
+      document.getElementById("message").textContent = message;
     }
 
-    function getReturnUrl() {
-      const params = new URLSearchParams(window.location.search);
-      const returnUrl = params.get("returnUrl");
+    function extractEquipmentId(text) {
+      const value = String(text || "").trim();
+      if (!value) return "";
 
-      if (!returnUrl) return "";
+      // QR Code 可能只包含 W04。
+      if (/^[a-zA-Z0-9_-]+$/.test(value)) {
+        return value;
+      }
 
+      // 如果 QR Code 是完整網址，也嘗試取得 equipmentId。
       try {
-        const parsed = new URL(returnUrl);
+        const url = new URL(value);
+        const id = url.searchParams.get("equipmentId");
+        if (id) return id.trim();
+      } catch (error) {}
 
-        // 僅允許回到本專案既有的 Apps Script Web App。
-        if (
-          parsed.origin === "https://script.google.com" &&
-          parsed.pathname.indexOf(
-            "/a/macros/go.thu.edu.tw/s/AKfycbyDPvMKPLWLY4xYWdnN_0j8vTzCpiwSHlh-3SjN7wDEFACQYTQPFbEB83jTO_TPneQpVw/exec"
-          ) === 0
-        ) {
-          return parsed.href.split("#")[0];
+      // 也支援 equipmentId=W04 這種文字格式。
+      const match = value.match(/[?&#]equipmentId=([^&#]+)/i);
+      if (match) {
+        try {
+          return decodeURIComponent(match[1]).trim();
+        } catch (error) {
+          return match[1].trim();
         }
-      } catch (error) {
-        return "";
       }
 
       return "";
     }
 
-    async function startScanner() {
-      if (scanner) {
-        showMessage("掃描器已啟動，請將 QR Code 對準相機。");
-        return;
-      }
-
-      if (typeof Html5Qrcode === "undefined") {
-        showMessage("掃描程式載入失敗，請重新整理網頁後再試。");
+    function returnToDashboard(equipmentId) {
+      if (!returnUrl) {
+        showMessage("掃描成功，設備編號：" + equipmentId +
+          "。目前沒有收到 Dashboard 回傳網址。");
         return;
       }
 
       try {
+        const target = new URL(returnUrl);
+
+        // 只允許返回指定的 ReadyCare Apps Script Web App。
+        if (
+          target.origin !== "https://script.google.com" ||
+          !target.pathname.includes("/s/AKfycbyDPvMKPLWLY4xYWdnN_0j8vTzCpiwSHlh-3SjN7wDEFACQYTQPFbEB83jTO_TPneQpVw/exec")
+        ) {
+          showMessage("回傳網址驗證失敗，請從 ReadyCare Dashboard 重新開啟掃描器。");
+          return;
+        }
+
+        // 以 query parameter 傳送設備編號，不再依賴 URL hash。
+        target.searchParams.set("dashboard", "1");
+        target.searchParams.set("equipmentId", equipmentId);
+
+        showMessage("掃描成功！設備編號：" + equipmentId + "，正在返回 Dashboard……");
+        window.location.assign(target.toString());
+      } catch (error) {
+        showMessage("回傳失敗：" + error.message);
+      }
+    }
+
+    async function startScanner() {
+      if (scanning) return;
+
+      try {
+        handlingResult = false;
         scanner = new Html5Qrcode("reader");
 
         await scanner.start(
           { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 220, height: 220 } },
-          async (decodedText) => {
-            if (busy) return;
-            busy = true;
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 }
+          },
+          async function(decodedText) {
+            if (handlingResult) return;
 
-            const scannedText = decodedText.trim();
-            showMessage("掃描成功！正在開啟設備資料……");
+            const id = extractEquipmentId(decodedText);
+            if (!id) {
+              showMessage("已讀取 QR Code，但找不到有效的設備編號。內容：" + decodedText);
+              return;
+            }
+
+            handlingResult = true;
+            showMessage("掃描成功，設備編號：" + id + "。正在停止相機……");
 
             try {
-              if (scanner && scanner.isScanning) {
+              if (scanner && scanning) {
                 await scanner.stop();
+                scanning = false;
               }
             } catch (error) {
-              // 即使相機停止失敗，也繼續處理掃描結果。
+              // 即使停止相機失敗，仍嘗試返回 Dashboard。
             }
 
-            const returnUrl = getReturnUrl();
+            document.getElementById("startButton").disabled = false;
+            document.getElementById("stopButton").disabled = true;
 
-            if (returnUrl) {
-              // 使用網址片段傳回設備編號，不會觸發 Apps Script
-              // 以 ?equipmentId= 進入舊的獨立設備操作頁。
-              window.location.href =
-                returnUrl + "#equipmentId=" +
-                encodeURIComponent(scannedText);
-            } else {
-              // 保留原本直接掃描設備 QR Code 的行為。
-              window.location.href =
-                "https://script.google.com/a/macros/go.thu.edu.tw/s/AKfycbyDPvMKPLWLY4xYWdnN_0j8vTzCpiwSHlh-3SjN7wDEFACQYTQPFbEB83jTO_TPneQpVw/exec?equipmentId=" +
-                encodeURIComponent(scannedText);
-            }
+            returnToDashboard(id);
           },
-          () => {}
+          function() {
+            // 忽略每一幀尚未辨識到 QR Code 的訊息。
+          }
         );
 
-        showMessage("相機已開啟，請將設備 QR Code 放進掃描框。");
+        scanning = true;
+        document.getElementById("startButton").disabled = true;
+        document.getElementById("stopButton").disabled = false;
+        showMessage("相機已開啟，請將設備 QR Code 對準掃描框。");
       } catch (error) {
-        scanner = null;
-        busy = false;
-        showMessage(
-          "無法開啟相機：" + error +
-          "。請確認使用 HTTPS 網址，並允許瀏覽器使用相機。"
-        );
+        scanning = false;
+        document.getElementById("startButton").disabled = false;
+        document.getElementById("stopButton").disabled = true;
+        showMessage("無法開啟相機：" + error +
+          "。請確認使用 HTTPS 網址，並允許瀏覽器使用相機。");
       }
     }
 
     async function stopScanner() {
-      if (!scanner) return;
+      if (!scanner || !scanning) return;
 
       try {
-        if (scanner.isScanning) {
-          await scanner.stop();
-        }
-        await scanner.clear();
+        await scanner.stop();
+        scanning = false;
+        document.getElementById("startButton").disabled = false;
+        document.getElementById("stopButton").disabled = true;
+        showMessage("相機已停止。");
       } catch (error) {
-        console.log(error);
+        showMessage("停止相機時發生錯誤：" + error);
       }
-
-      scanner = null;
-      busy = false;
-      showMessage("相機已停止。");
     }
   </script>
 </body>
